@@ -1,2 +1,3 @@
-# learn-rust
+# Learn Rust
+
 Code for learning rust.
