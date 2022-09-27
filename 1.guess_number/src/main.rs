@@ -12,6 +12,7 @@ fn main() {
     let mut guess = String::new();
 
     // 读取命令行输入
+    // io::Result 是一个枚举，有 Ok 和 Err 两个变体
     io::stdin()
       .read_line(&mut guess)
       .expect("Failed to read line");
