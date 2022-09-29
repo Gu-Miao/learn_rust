@@ -89,6 +89,11 @@ fn main() {
   let _quotient = 56.7 / 32.2;
   let _reminder = 54 % 5;
 
+  // 可以有 x+=1; 但没有 x++;
+  let mut _some_number = 1;
+  _some_number += 1;
+  // _some_number++; // 报错
+
   // 布尔类型
   // 符号为 bool，一个字节大小
 
@@ -131,7 +136,7 @@ fn main() {
   // 函数
   // 使用 fn 关键字声明函数，函数名遵循 snake case 规范
   // 参数类型必须显式地指明
-  fn _sum_fn(x: i32, y: i32) {
+  fn _sum_fn(_x: i32, _y: i32) {
     // ...
   }
 
@@ -161,5 +166,45 @@ fn main() {
       return 5;
     }
     x + 5
+  }
+
+  // if 表达式
+  // if 表达式中的条件必须是 bool 类型
+  // 可以使用 if 表达式赋值，但是每个分支返回的类型必须相同
+  let _if_var = if 5 > 1 { 66 } else { 77 };
+
+  // loop 循环
+  // loop 中可以使用 continue, break，就和其他语言一样
+  // break 后面如果跟着表达式，就将其视为 loop 循环返回的值，由此可以看出 loop 循环
+  // 也是一个表达式
+  let mut loop_count: i32 = 0;
+  let _loop_var: i32 = loop {
+    loop_count += 1;
+    if loop_count == 10 {
+      break loop_count * 5;
+    }
+  };
+
+  // while 循环
+  // while 循环不能使用 break 跟表达式的语法，否则会报错
+  // while 循环也是表达式，返回空元组 ()
+  let mut while_condition = 10;
+  let _while_loop_value = while while_condition > 0 {
+    while_condition -= 2;
+  };
+
+  // for 循环
+  // 一般用于遍历集合
+  let for_loop_arr = [1, 2, 3, 4, 5];
+  for element in for_loop_arr.iter() {
+    println!("element is {}", element); // 1 2 3 4 5
+  }
+
+  // Range
+  // 标准库提供
+  // 指定开始数字和结束数字，Range 可以生成它们之间的数字，左闭右开区间
+  // rev() 方法可以反转
+  for number in (0..5).rev() {
+    println!("number is {}", number); // 4 3 2 1 0
   }
 }
