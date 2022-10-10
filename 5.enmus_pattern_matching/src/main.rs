@@ -61,4 +61,11 @@ fn main() {
     7 => println!("seven"),
     _ => (),
   }
+
+  // if let 只关心一种匹配并忽略其他匹配的情况
+  if let 3 = v {
+    println!("three");
+  } else {
+    println!("others");
+  }
 }
