@@ -77,7 +77,7 @@ fn main() {
   // impl 块可以有多个
   impl Rectangle {
     // 如果第一个参数不是 self，那么这就是一个关联函数
-    // 方法与关联函数可以理解为 JavaScript 中的圆形方法和静态方法
+    // 方法与关联函数可以理解为 JavaScript 中的原型方法和静态方法
     fn create(width: u32, height: u32) -> Rectangle {
       Rectangle { width, height }
     }
