@@ -1,5 +1,5 @@
 [package]
-name = "packages_crates_modules"
+name = "packages_crates_modules_paths"
 version = "0.1.0"
 edition = "2021"
 
