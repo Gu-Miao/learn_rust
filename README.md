@@ -14,6 +14,7 @@
 7. [Vector](./7.vector/src/main.rs)
 8. [String](./8.string/src/main.rs)
 9. [HashMap](./9.hashmap/src/main.rs)
+10. [错误处理](./10.error_handling/src/main.rs)
 
 ## 参考教程：
 
