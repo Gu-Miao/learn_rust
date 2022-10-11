@@ -1,5 +1,8 @@
 # rust 学习笔记
 
+![rust](https://shields.io/badge/lang-Rust-orange.svg)
+![GitHub](https://img.shields.io/github/license/Gu-Miao/learn-rust)
+
 ## 目录
 
 1. [猜数游戏](./1.guess_number/src/main.rs)
