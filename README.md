@@ -1,6 +1,6 @@
 # rust 学习笔记
 
-![rust](https://shields.io/badge/lang-Rust-orange.svg)
+![Rust](https://shields.io/badge/lang-Rust-orange.svg)
 ![GitHub](https://img.shields.io/github/license/Gu-Miao/learn-rust)
 
 ## 目录
@@ -15,6 +15,7 @@
 8. [String](./8.string/src/main.rs)
 9. [HashMap](./9.hashmap/src/main.rs)
 10. [错误处理](./10.error_handling/src/main.rs)
+11. [泛型](11.generic/src/main.rs)
 
 ## 参考教程：
 
