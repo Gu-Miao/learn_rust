@@ -18,6 +18,7 @@
 11. [泛型](11.generic/src/main.rs)
 12. [Trait](12.trait/src/main.rs)
 13. [生命周期](13.lifetimes/src/main.rs)
+14. [测试](14.test/src/main.rs)
 
 ## 参考教程：
 
