@@ -1,0 +1,5 @@
+[workspace]
+members = [
+  "crate1",
+  "crate2"
+]

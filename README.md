@@ -22,6 +22,7 @@
 15. [编写一个简易版的 grep 命令行程序](15.minigrep/src/main.rs)
 16. [闭包](16.closure/src/main.rs)
 17. [迭代器](17.iterator/src/main.rs)
+18. [cargo](18.cargo/README.md)
 
 ## 参考教程：
 

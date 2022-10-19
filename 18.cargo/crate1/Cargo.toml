@@ -1,0 +1,14 @@
+[package]
+name = "crate1"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[profile.dev]
+opt-level = 0 # 优化等级 [0,3]，开发环境默认 0，发布模式默认 3
+
+[profile.release]
+opt-level = 3
