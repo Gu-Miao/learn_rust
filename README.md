@@ -23,6 +23,7 @@
 16. [闭包](16.closure/src/main.rs)
 17. [迭代器](17.iterator/src/main.rs)
 18. [cargo](18.cargo/README.md)
+19. [智能指针](19.smart_pointer/src/main.rs)
 
 ## 参考教程：
 
