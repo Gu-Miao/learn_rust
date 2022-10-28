@@ -1,5 +1,6 @@
+use std::cell::RefCell;
 use std::ops::Deref;
-use std::rc::Rc;
+use std::rc::{Rc, Weak};
 
 fn main() {
   // 智能指针
@@ -132,6 +133,14 @@ fn main() {
   // v 已经失效
   // println!("{}", v);
 
+  // 然而，当将基础类型传入 drop 函数并调用时，原来的变量不会失效，可以正常使用
+  // 因为 drop 函数的本质是夺取传入参数的所有权，而基础类型作为参数传递时，不会
+  // 发生移动而是复制，因此将基础类型或实现了 Copy trait 的类型作为参数传递给
+  // drop 函数并调用是没有意义的
+  let x = 1;
+  drop(1);
+  println!("{}", x);
+
   // Rc<T> 引用计数智能指针
   // 有时一个值会有多个所有者
   // Rc<T> 内部维护了一个引用次数的计数器，当计数器为 0 时，说明引用可以被安全地清理掉了
@@ -144,4 +153,241 @@ fn main() {
   // let list_a = List::Cons(5, Box::new(List::Cons(10, Box::new(List::Nil))));
   // let _list_b = List::Cons(3, Box::new(list_a));
   // let _list_c = List::Cons(4, Box::new(list_a));
+
+  // 使用 Rc<T> 共享所有权
+  enum RcList {
+    Cons(i32, Rc<RcList>),
+    Nil,
+  }
+
+  let list_d = Rc::new(RcList::Cons(
+    5,
+    Rc::new(RcList::Cons(10, Rc::new(RcList::Nil))),
+  ));
+
+  let _list_e = RcList::Cons(3, Rc::clone(&list_d)); // 引用计数 +1
+  println!(
+    "count after creating _list_e: {}",
+    Rc::strong_count(&list_d)
+  );
+
+  {
+    let _list_f = RcList::Cons(4, Rc::clone(&list_d)); // 引用计数 +1
+    println!(
+      "count after creating _list_f: {}",
+      Rc::strong_count(&list_d)
+    );
+  } // _list_f 出作用域，引用计数 -1
+
+  println!(
+    "count after creating _list_g: {}",
+    Rc::strong_count(&list_d)
+  );
+
+  // RefCell<T>
+  // 同 Rc<T>，只能用于单线程场景
+  // 与 Box<T> 的不同
+  // 1. Box<T> 在编译时检查借用规则，而 RefCell<T> 在运行时检查
+  // 2. Box<T> 不满足借用规则，会发生编译错误，RefCell<T> 则会 panic
+
+  // 在不同阶段进行借用规则检查
+  // 编译时
+  // 1. 尽早暴露问题
+  // 2. 无运行时开销
+  // 3. 对大多数场景是最优选，也是 Rust 的默认行为
+  // 运行时
+  // 1. 问题暴露延后，甚至到生产环境
+  // 2. 运行时开销
+  // 3. 实现某些特定的内存安全场景（不可变环境中修改自身数据）
+
+  refcell_rc();
+
+  loop_ref();
+
+  tree();
+}
+
+// 内部可变和 RefCell<T> 结合使用的例子
+pub trait Messenger {
+  fn send(&self, msg: &str);
+}
+
+pub struct LimitTracker<'a, T: Messenger> {
+  messenger: &'a T,
+  value: usize,
+  max: usize,
+}
+
+impl<'a, T> LimitTracker<'a, T>
+where
+  T: Messenger,
+{
+  pub fn new(messenger: &'a T, max: usize) -> LimitTracker<'a, T> {
+    LimitTracker {
+      messenger,
+      value: 0,
+      max,
+    }
+  }
+
+  pub fn set_value(&mut self, value: usize) {
+    self.value = value;
+
+    let percentage_of_max = self.value as f64 / self.max as f64;
+
+    if percentage_of_max >= 1.0 {
+      self.messenger.send("Error: You are over your quota!");
+    } else if percentage_of_max >= 0.9 {
+      self
+        .messenger
+        .send("Urgent warning: You've used up over 90% of your quota!");
+    } else if percentage_of_max >= 0.75 {
+      self
+        .messenger
+        .send("Warning: You've used up over 75% of your quota!");
+    }
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  struct MockMessenger {
+    sent_messages: RefCell<Vec<String>>,
+  }
+
+  impl MockMessenger {
+    fn new() -> MockMessenger {
+      MockMessenger {
+        sent_messages: RefCell::new(vec![]),
+      }
+    }
+  }
+
+  impl Messenger for MockMessenger {
+    fn send(&self, message: &str) {
+      self.sent_messages.borrow_mut().push(String::from(message));
+    }
+  }
+
+  #[test]
+  fn it_sends_an_over_75_percent_warning_message() {
+    let mock_messenger = MockMessenger::new();
+    let mut limit_tracker = LimitTracker::new(&mock_messenger, 100);
+
+    limit_tracker.set_value(80);
+
+    assert_eq!(mock_messenger.sent_messages.borrow().len(), 1);
+  }
+}
+
+// RefCell<T> 会记录当前存在多少个 Ref<T> 和 RefMut<T> 类型
+// 调用 borrow 方法会返回一个 Ref<T> 类型，不可变计数 +1，离开作用域不可变计数 -1；
+// 调用 borrow_mut 方法会返回一个 RefMut<T> 类型，可变计数 +1，离开作用域可变计数 -1
+// 任何一个给定的时间里，只允许存在多个不可变借用或一个可变借用，否则在运行时 panic
+
+// 将 Rc<T> 和 RefCell<T> 结合使用来实现一个拥有多重所有权的可变数据
+fn refcell_rc() {
+  #[derive(Debug)]
+  enum List {
+    Cons(Rc<RefCell<i32>>, Rc<List>),
+    Nil,
+  }
+
+  let value = Rc::new(RefCell::new(5));
+  let list_a = Rc::new(List::Cons(Rc::clone(&value), Rc::new(List::Nil)));
+  let list_b = Rc::new(List::Cons(Rc::new(RefCell::new(10)), Rc::clone(&list_a)));
+  let list_c = List::Cons(Rc::new(RefCell::new(15)), Rc::clone(&list_b));
+
+  println!("{:?}", list_c);
+}
+
+// 循环引用导致内存泄漏
+fn loop_ref() {
+  #[derive(Debug)]
+  enum List {
+    Cons(i32, RefCell<Rc<List>>),
+    Nil,
+  }
+
+  impl List {
+    fn tail(&self) -> Option<&RefCell<Rc<List>>> {
+      match self {
+        List::Cons(_, tail) => Some(tail),
+        List::Nil => None,
+      }
+    }
+  }
+
+  let list_a = Rc::new(List::Cons(0, RefCell::new(Rc::new(List::Nil))));
+  let list_b = Rc::new(List::Cons(10, RefCell::new(Rc::clone(&list_a))));
+
+  if let Some(link) = list_a.tail() {
+    *link.borrow_mut() = Rc::clone(&list_b);
+  };
+
+  println!("strong ref of list a: {}", Rc::strong_count(&list_a));
+  println!("strong ref of list b: {}", Rc::strong_count(&list_b));
+
+  // 去掉注释，会发生堆栈溢出
+  // println!("{:?}", list_a.tail());
+}
+
+// 使用 Weak<T> 避免循环引用
+// Rc<T> 只有在 strong_count（强引用）为 0 时被清理
+// 可以使用 Rc::downgrade 方法创建弱引用，它返回一个 Weak<T> 类型，并将 weak_count 计数 +1
+// weak_count 不为 0 不会影响 Rc<T> 的清理，当强引用计数为 0 时，弱引用会自动断开
+// 使用 Weak<T> 之前需要保证它指向的值仍然存在，可以调用实例的 upgrade 方法，返回 Option<Rc<T>>
+fn tree() {
+  // 我们想创建一个树，并且树的每个节点可以获取其子节点和父节点
+  #[allow(dead_code)]
+  #[derive(Debug)]
+  struct Node {
+    value: i32,
+    parent: RefCell<Weak<Node>>,
+    children: RefCell<Vec<Rc<Node>>>,
+  }
+
+  let leaf = Rc::new(Node {
+    value: 0,
+    parent: RefCell::new(Weak::new()),
+    children: RefCell::new(vec![]),
+  });
+
+  println!(
+    "leaf strong = {}, weak = {}",
+    Rc::strong_count(&leaf),
+    Rc::weak_count(&leaf),
+  );
+
+  {
+    let branch = Rc::new(Node {
+      value: 10,
+      parent: RefCell::new(Weak::new()),
+      children: RefCell::new(vec![Rc::clone(&leaf)]),
+    });
+
+    // 修改子节点的 parent 字段
+    *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+
+    println!(
+      "branch strong = {}, weak = {}",
+      Rc::strong_count(&branch),
+      Rc::weak_count(&branch),
+    );
+
+    println!(
+      "leaf strong = {}, weak = {}",
+      Rc::strong_count(&leaf),
+      Rc::weak_count(&leaf),
+    );
+  }
+
+  println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+  println!(
+    "leaf strong = {}, weak = {}",
+    Rc::strong_count(&leaf),
+    Rc::weak_count(&leaf),
+  );
 }
