@@ -114,9 +114,101 @@ fn pattern_grammer() {
 
   // 匹配结构体中的值
   match point {
-    Point { x: 0, .. } => println!("x of point is 0, {:?}", point),
+    Point { x: 0, y } => println!("x of point is 0, y is {}", y),
     _ => {}
   }
+
+  // 解构嵌套枚举，元组和结构体
+  #[allow(dead_code)]
+  enum Color {
+    Rgb(i32, i32, i32),
+    Hsv(i32, i32, i32),
+  }
+  #[allow(dead_code)]
+  enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(Color),
+  }
+
+  let msg = Message::ChangeColor(Color::Rgb(255, 0, 0));
+
+  match msg {
+    Message::Move { x, y } => println!("move, x: {}, y: {}", x, y),
+    Message::Write(str) => println!("write: {}", str),
+    Message::ChangeColor(Color::Hsv(h, s, v)) => println!("hsv color: {}, {}, {}", h, s, v),
+    Message::ChangeColor(Color::Rgb(r, g, b)) => println!("rgb color: {}, {}, {}", r, g, b),
+    _ => (),
+  }
+
+  let ((m, n), Point { x: px, y: py }) = ((3, 10), Point { x: 1, y: 1 });
+  println!("{}, {}, {}, {}", m, n, px, py);
+
+  // 忽略参数
+  fn some_fn(_: i32, x: &str) {
+    println!("this fn ignores the first argument, x is {}", x);
+  }
+  some_fn(1, "x");
+
+  // 忽略值的某一部分
+  let t = (1, 2, 3, 4, 5);
+
+  match t {
+    (first, _, thirid, _, fifth) => println!("{}, _, {}, _, {}", first, thirid, fifth),
+  }
+
+  let pp = Point { x: 1, y: 2 };
+
+  match pp {
+    Point { x: 1, y: _ } => println!("{}", x),
+    _ => (),
+  }
+
+  // 以 _ 开头忽略未使用的变量
+  let _x = 1;
+
+  // 使用 .. 忽略剩余部分
+  let Point { x: px1, .. } = point;
+  println!("px1: {}", px1);
+
+  // 元组中使用 .. 智能省略中间内容，否则会有歧义
+  let (first, .., last) = (1, 2, 3, 4, 5);
+  println!("{}, {}", first, last);
+
+  // match 守卫
+  let sx = Some(55);
+  let is_bool = true;
+
+  match sx {
+    Some(x) if (x < 40) | is_bool => println!("x is {}", x),
+    _ => (),
+  }
+
+  // @ 绑定
+  let pc = Point { x: 80, y: 60 };
+
+  match pc {
+    Point { x: 1..=50, .. } => println!("x is in 1~100"),
+    Point {
+      y: y @ 50..=100, ..
+    } => println!("y is in 50~100, value is {}", y),
+    _ => (),
+  }
+}
+
+fn ownship() {
+  // match 或 if let 在匹配时会夺取所有权
+  let x = Some(String::from("abcd"));
+
+  match x {
+    // 如果改为 Some(_) 则不会夺取所有权
+    Some(x) => println!("{}", &x),
+    _ => (),
+  }
+
+  // 报错，x 所有权已经转移
+  // println!("{:?}", x);
 }
 
 fn main() {
@@ -124,4 +216,5 @@ fn main() {
   while_let();
   other_patterns();
   pattern_grammer();
+  ownship();
 }
