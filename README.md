@@ -27,6 +27,7 @@
 20. [并发](20.concurrency/src/main.rs)
 21. [面向对象特性](21.oop/src/main.rs)
 22. [模式匹配](22.patterns_matching/src/main.rs)
+23. [unsafe Rust](23.unsafe/src/main.rs)
 
 ## 参考教程：
 

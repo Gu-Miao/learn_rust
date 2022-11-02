@@ -20,7 +20,7 @@
 // 1. 与 C 语言交互
 // 2. 构建借用检查器无法理解的安全抽象
 
-// 解引用原始指针
+// 特性一：解引用原始指针
 fn deref_raw_pointer() {
   let mut num = 10;
 
@@ -32,24 +32,97 @@ fn deref_raw_pointer() {
     println!("*r2: {}", *r2);
   }
 
+  // 任意的内存地址
   let address = 0x012345usize;
   let r = address as *const i32;
 
   unsafe {
-    println!("*r: {}", *r);
+    // 非常可能出现内存错误
+    // println!("*r: {}", *r);
   }
 }
 
-// 调用 unsafe 函数/方法，一般需要满足一些条件（文档）
-// 需要在 unsafe 块中调用
-unsafe fn danger() {}
-fn call_unsafe() {
+use std::slice;
+
+// 将 unsafe 代码包裹在安全函数中，对外提供安全的 API
+fn split_at_mut(slice: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
+  let len = slice.len();
+  let ptr = slice.as_mut_ptr();
+
+  // 特性二：调用 unsafe 函数/方法，一般需要满足一些条件（文档）
+  // 需要在 unsafe 块中调用
   unsafe {
-    danger();
+    (
+      slice::from_raw_parts_mut(ptr, mid),
+      slice::from_raw_parts_mut(ptr.add(mid), len - mid),
+    )
   }
+}
+
+fn call_safe_fn() {
+  let mut arr = [1, 2, 3, 4, 5, 6];
+
+  // split_at_mut 是安全的，可以放心调用
+  let (slice1, slice2) = split_at_mut(&mut arr, 3);
+
+  println!("slice1: {:?}, slice2: {:?}", slice1, slice2);
+}
+
+// 使用 extern 函数调用外部代码
+// 外部函数接口 (FFI, Foreign Function Interface)，它允许一种编程语言定义函数供其他编程语言调用
+// 其他语言不会遵守 Rust 的规则，而 Rust 也无法对其进行检查，因而外部代码必定是不安全的
+// "C" 指的是外部函数使用的应用二进制接口 (Application Binary Interface, ABI)，它用于定义函数
+// 在汇编层面的调用方式。"C" ABI 是最常见的 ABI，它遵循 C 语言的 ABI
+extern "C" {
+  // 想要调用的外部函数的签名
+  fn abs(input: i32) -> i32;
+}
+
+// 从其他语言调用 Rust 函数
+// 使用 extern 关键字并指明 ABI，再添加 #[no_mangle] 注解，避免 Rust 编译器在编译时修改函数名称，
+// 让其他语言正常识别函数
+// 这种函数不需要使用 unsafe 关键字
+#[no_mangle]
+pub extern "C" fn rust_fn() {
+  println!("This is from rust");
+}
+
+fn call_extern() {
+  unsafe {
+    println!("{}", abs(1));
+  }
+}
+
+// 全局（静态）变量
+// 使用 static 关键字，用大写的蛇形命名法命名，声明是必须指明其类型，生命周期必须为 'static，可以省略
+// 访问不可变的静态变量是安全的
+static mut NUM_COUNT: i32 = 0;
+
+// 静态变量与常量的区别
+// 1. 静态变量有固定的内存地址，使用它的值总会访问同样的数据；而常量则可以复制
+// 2. 静态变量是可变的，访问或修改可变的静态变量是 unsafe 的，因为访问和修改静态变量可能出现数据竞争，
+// 比如多线程场景
+fn static_variable() {
+  // 特性三：访问和修改可变的静态变量
+  unsafe {
+    NUM_COUNT += 1;
+    println!("NUM_COUNT: {}", NUM_COUNT);
+  }
+}
+
+// 特性四：实现 unsafe trait
+// 当一个 trait 中至少存在一个方法有编译器无法校验的不安全因素时，就称这个 trait 是不安全的
+// 声明和实现都需要使用 unsafe 关键字
+unsafe trait Foo {
+  // ...
+}
+unsafe impl Foo for i32 {
+  //...
 }
 
 fn main() {
   deref_raw_pointer();
-  call_unsafe();
+  call_safe_fn();
+  call_extern();
+  static_variable();
 }
