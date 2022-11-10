@@ -96,26 +96,27 @@ impl Summary for Tweet {
   }
 }
 
-fn _fn5(flag: bool) -> impl Summary {
-  if flag {
-    News {
-      headline: "十字路口发生连环事故，多人轻伤".to_string(),
-      location: "河北省石家庄市中华南大街".to_string(),
-      author: "王平".to_string(),
-      content: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".to_string(),
-    }
-  } else {
-    // News 和 Tweet 虽然都实现了 Summary trait，但是函数能返回具体类型是唯一的，
-    // 因此这里会报错
-    Tweet {
-      username: "Sam".to_string(),
-      content: "I love Rust".to_string(),
-      time: "2022-10-12".to_string(),
-    }
-  }
-}
+// fn _fn5(flag: bool) -> impl Summary {
+//   if flag {
+//     News {
+//       headline: "十字路口发生连环事故，多人轻伤".to_string(),
+//       location: "河北省石家庄市中华南大街".to_string(),
+//       author: "王平".to_string(),
+//       content: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".to_string(),
+//     }
+//   } else {
+//     // News 和 Tweet 虽然都实现了 Summary trait，但是函数能返回具体类型是唯一的，
+//     // 因此这里会报错
+//     Tweet {
+//       username: "Sam".to_string(),
+//       content: "I love Rust".to_string(),
+//       time: "2022-10-12".to_string(),
+//     }
+//   }
+// }
 
 // 实现方法时也可以使用 trait bound
+#[allow(dead_code)]
 struct Point<T> {
   x: T,
   y: T,

@@ -75,7 +75,7 @@ use rand::Rng;
 // 使用嵌套路径清理大量 use 语句
 // 可以使用 self 表示本身
 // 如果在 JavaScript 中，可以表示为 import { default as io, Write } from 'std/io'
-use std::io::{self, Write};
+// use std::io::{self, Write};
 
 // 将模块放于其他文件中
 mod test_a;
