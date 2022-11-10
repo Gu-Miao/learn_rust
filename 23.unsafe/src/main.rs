@@ -38,7 +38,7 @@ fn deref_raw_pointer() {
 
   unsafe {
     // 非常可能出现内存错误
-    // println!("*r: {}", *r);
+    println!("*r: {}", *r);
   }
 }
 

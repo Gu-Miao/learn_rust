@@ -29,6 +29,7 @@
 22. [模式匹配](22.patterns_matching/src/main.rs)
 23. [unsafe Rust](23.unsafe/src/main.rs)
 24. [高级 Trait](24.advanced_trait/src/main.rs)
+25. [高级类型](25.advanced_type/src/main.rs)
 
 ## 参考教程：
 
