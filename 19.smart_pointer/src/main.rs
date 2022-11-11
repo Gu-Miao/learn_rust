@@ -95,7 +95,7 @@ fn main() {
   let name = MyBox(String::from("Tyrion Lannister"));
 
   // 这里就发生了隐式解引用转换
-  // &m 的类型为 &MyBox<String>，deref 后为 &String
+  // &name 的类型为 &MyBox<String>，deref 后为 &String
   // 而标准库中的 String 也实现了 Deref trait，它会返回 &str
   // 也就是一路通过 deref 解引用，知道符合参数类型为止
   // 如果 Rust 没有这个特性，那么下面的代码应该这样写：greeting(&(*name)[..]);
