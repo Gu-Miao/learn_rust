@@ -33,6 +33,7 @@
 26. [高级函数和闭包](26.advanced_fn_closure/src/main.rs)
 27. [宏](27.macro/binary/src/main.rs)
 28. [简单的 web 服务器](28.single_web_server/src/main.rs)
+29. [数值比较](29.num_cmp/src/main.rs)
 
 ## 参考教程：
 
