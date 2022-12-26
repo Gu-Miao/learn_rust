@@ -1,0 +1,4 @@
+Hello Rust!
+I love Rust!
+Let's learn Rust!
+Oh ~ My god! Rust is hard!
