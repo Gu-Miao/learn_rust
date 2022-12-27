@@ -36,6 +36,7 @@
 29. [数值比较](29.num_cmp/src/main.rs)
 30. [文件系统](30.fs/src/main.rs)
 31. [Rust 全栈开发 - 前戏](31.rust_web_full_stack_foreplay/README.md)
+32. [Rust 全栈开发](32.rust_web_full_stack/README.md)
 
 ## 参考教程：
 
