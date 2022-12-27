@@ -1,4 +1,4 @@
-use super::handler::{APIHandler, NotFoundHandler, StaticHandler};
+use super::handler::{APIHandler, Handler, NotFoundHandler, StaticHandler};
 use http::http_request::*;
 use std::net::TcpStream;
 

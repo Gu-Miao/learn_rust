@@ -35,7 +35,7 @@
 28. [简单的 web 服务器](28.single_web_server/src/main.rs)
 29. [数值比较](29.num_cmp/src/main.rs)
 30. [文件系统](30.fs/src/main.rs)
-31. [Rust 全栈开发](30.rust_web_full_stack/README.md)
+31. [Rust 全栈开发](31.rust_web_full_stack/README.md)
 
 ## 参考教程：
 
