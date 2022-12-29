@@ -16,7 +16,6 @@ pub async fn new_course(
   new_course: web::Json<Course>,
   app_state: web::Data<AppState>,
 ) -> HttpResponse {
-  println!("New course");
   let course_count = app_state
     .courses
     .lock()
@@ -35,5 +34,32 @@ pub async fn new_course(
   };
 
   app_state.courses.lock().unwrap().push(new_course);
+
   HttpResponse::Ok().json("Course added")
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use actix_web::http::StatusCode;
+  use std::sync::Mutex;
+
+  #[actix_rt::test]
+  async fn post_course_test() {
+    let course = web::Json(Course {
+      teacher_id: 0,
+      name: "JavaScript ES6".into(),
+      id: None,
+      time: None,
+    });
+
+    let app_state = web::Data::new(AppState {
+      health_check_response: "".to_string(),
+      visit_count: Mutex::new(0),
+      courses: Mutex::new(vec![]),
+    });
+
+    let res = new_course(course, app_state).await;
+    assert_eq!(res.status(), StatusCode::OK);
+  }
 }
