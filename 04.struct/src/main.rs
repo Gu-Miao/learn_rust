@@ -33,7 +33,8 @@ fn main() {
 
   // 结构体更新语法
   // 这里与 JavaScript 的 ... 不是一回事，..user1 不会覆盖 usernmae 或者
-  // sign_in_count 属性，只会补充 User 剩下的属性
+  // sign_in_count 属性，只会补充 User 剩下的属性，并且需要 user1 与 _user2
+  // 是相同类型
   let _user2 = User {
     username: String::from("Xiao Hui"),
     sign_in_count: 1,
