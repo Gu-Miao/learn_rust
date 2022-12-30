@@ -1,4 +1,7 @@
 use actix_web::{web, App, HttpServer};
+use dotenvy::dotenv;
+use sqlx::postgres::PgPoolOptions;
+use std::env;
 use std::io;
 use std::sync::Mutex;
 
@@ -16,10 +19,15 @@ use state::AppState;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
+  dotenv().ok();
+
+  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+  let db = PgPoolOptions::new().connect(&database_url).await.unwrap();
+
   let shared_data = web::Data::new(AppState {
     health_check_response: "I'm OK".to_string(),
     visit_count: Mutex::new(0),
-    courses: Mutex::new(vec![]),
+    db,
   });
   let app = move || {
     App::new()
