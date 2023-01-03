@@ -1,4 +1,5 @@
 use super::db_access::*;
+use super::error::*;
 use super::models::Course;
 use super::state::AppState;
 use actix_web::{web, HttpResponse};
@@ -15,26 +16,29 @@ pub async fn health_check_handler(app_state: web::Data<AppState>) -> HttpRespons
 pub async fn new_course(
   new_course: web::Json<Course>,
   app_state: web::Data<AppState>,
-) -> HttpResponse {
-  let course = new_course_db(&app_state.db, new_course.into()).await;
-  HttpResponse::Ok().json(course)
+) -> Result<HttpResponse, MyError> {
+  new_course_db(&app_state.db, new_course.into())
+    .await
+    .map(|course| HttpResponse::Ok().json(course))
 }
 
 pub async fn get_courses_for_teacher(
   path: web::Path<i32>,
   app_state: web::Data<AppState>,
-) -> HttpResponse {
-  let courses = get_courses_for_teacher_db(&app_state.db, path.into_inner()).await;
-  HttpResponse::Ok().json(courses)
+) -> Result<HttpResponse, MyError> {
+  get_courses_for_teacher_db(&app_state.db, path.into_inner())
+    .await
+    .map(|courses| HttpResponse::Ok().json(courses))
 }
 
 pub async fn get_courses_detail(
   path: web::Path<(i32, i32)>,
   app_state: web::Data<AppState>,
-) -> HttpResponse {
+) -> Result<HttpResponse, MyError> {
   let (teacher_id, id) = path.into_inner();
-  let course = get_courses_detail_db(&app_state.db, id, teacher_id).await;
-  HttpResponse::Ok().json(course)
+  get_courses_detail_db(&app_state.db, id, teacher_id)
+    .await
+    .map(|course| HttpResponse::Ok().json(course))
 }
 
 #[cfg(test)]
@@ -65,7 +69,7 @@ mod tests {
       time: None,
     });
 
-    let res = new_course(course, app_state).await;
+    let res = new_course(course, app_state).await.unwrap();
     assert_eq!(res.status(), StatusCode::OK);
   }
 
@@ -82,7 +86,9 @@ mod tests {
       db,
     });
 
-    let res = get_courses_for_teacher(web::Path::from(0), app_state).await;
+    let res = get_courses_for_teacher(web::Path::from(0), app_state)
+      .await
+      .unwrap();
     assert_eq!(res.status(), StatusCode::OK);
   }
 
@@ -99,7 +105,9 @@ mod tests {
       db,
     });
 
-    let res = get_courses_detail(web::Path::from((0, 1)), app_state).await;
+    let res = get_courses_detail(web::Path::from((0, 1)), app_state)
+      .await
+      .unwrap();
     assert_eq!(res.status(), StatusCode::OK);
   }
 }
