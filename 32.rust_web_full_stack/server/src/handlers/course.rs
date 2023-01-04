@@ -13,42 +13,45 @@ pub async fn create_course(
     .map(|course| HttpResponse::Ok().json(course))
 }
 
-pub async fn get_courses_of_teacher(
-  path: web::Path<i32>,
+pub async fn get_courses(
+  query: web::Query<GetCoursesQuery>,
   app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, MyError> {
-  db_get_courses_of_teacher(&app_state.db, path.into_inner())
-    .await
-    .map(|courses| HttpResponse::Ok().json(courses))
+  let result = match query.teacher_id {
+    Some(teahcer_id) => db_get_courses_of_teacher(&app_state.db, teahcer_id).await,
+    None => db_get_courses(&app_state.db).await,
+  };
+
+  result.map(|courses| HttpResponse::Ok().json(courses))
 }
 
 pub async fn get_course(
-  path: web::Path<(i32, i32)>,
+  path: web::Path<i32>,
   app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, MyError> {
-  let (teacher_id, id) = path.into_inner();
-  db_get_course(&app_state.db, id, teacher_id)
+  let id = path.into_inner();
+  db_get_course(&app_state.db, id)
     .await
     .map(|course| HttpResponse::Ok().json(course))
 }
 
 pub async fn remove_course(
-  path: web::Path<(i32, i32)>,
+  path: web::Path<i32>,
   app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, MyError> {
-  let (teacher_id, id) = path.into_inner();
-  db_remove_course(&app_state.db, teacher_id, id)
+  let id = path.into_inner();
+  db_remove_course(&app_state.db, id)
     .await
     .map(|msg| HttpResponse::Ok().json(msg))
 }
 
 pub async fn update_course(
-  path: web::Path<(i32, i32)>,
+  path: web::Path<i32>,
   app_state: web::Data<AppState>,
   update_course: web::Json<UpdateCourseDTO>,
 ) -> Result<HttpResponse, MyError> {
-  let (teacher_id, id) = path.into_inner();
-  db_update_course(&app_state.db, teacher_id, id, update_course.try_into()?)
+  let id = path.into_inner();
+  db_update_course(&app_state.db, id, update_course.try_into()?)
     .await
     .map(|course| HttpResponse::Ok().json(course))
 }
@@ -105,9 +108,14 @@ mod tests {
       db,
     });
 
-    let res = get_courses_of_teacher(web::Path::from(1), app_state)
-      .await
-      .unwrap();
+    let res = get_courses(
+      web::Query(GetCoursesQuery {
+        teacher_id: Some(1),
+      }),
+      app_state,
+    )
+    .await
+    .unwrap();
     assert_eq!(res.status(), StatusCode::OK);
   }
 
@@ -124,9 +132,7 @@ mod tests {
       db,
     });
 
-    let res = get_course(web::Path::from((1, 1)), app_state)
-      .await
-      .unwrap();
+    let res = get_course(web::Path::from(1), app_state).await.unwrap();
     assert_eq!(res.status(), StatusCode::OK);
   }
 
@@ -143,7 +149,7 @@ mod tests {
       db,
     });
 
-    let res = get_course(web::Path::from((9999, 9999)), app_state).await;
+    let res = get_course(web::Path::from(9999), app_state).await;
 
     match res {
       Ok(_) => println!("Something went wrong"),
@@ -175,7 +181,7 @@ mod tests {
       level: None,
     });
 
-    let res = update_course(web::Path::from((1, 1)), app_state, update_course_dto)
+    let res = update_course(web::Path::from(1), app_state, update_course_dto)
       .await
       .unwrap();
 
@@ -196,9 +202,7 @@ mod tests {
       db,
     });
 
-    let res = remove_course(web::Path::from((1, 1)), app_state)
-      .await
-      .unwrap();
+    let res = remove_course(web::Path::from(1), app_state).await.unwrap();
 
     assert_eq!(res.status(), StatusCode::OK)
   }
@@ -216,7 +220,7 @@ mod tests {
       db,
     });
 
-    let res = remove_course(web::Path::from((9999, 9999)), app_state).await;
+    let res = remove_course(web::Path::from(9999), app_state).await;
 
     match res {
       Ok(_) => println!("Something went wrong"),

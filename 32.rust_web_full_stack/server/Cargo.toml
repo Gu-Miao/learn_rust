@@ -2,24 +2,19 @@
 name = "server"
 version = "0.1.0"
 edition = "2021"
-default-run = "teacher_service"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4"
-actix-rt = "2.7"
-serde = { version = "1", features = ["derive"] }
-chrono = { version = "0.4", features = ["serde"] }
-dotenvy = "0.15"
-openssl = { version = "0.10", features = ["vendored"] }
 sqlx = { version = "0.5", default_features = false, features = [
   "postgres",
   "runtime-tokio-rustls",
   "macros",
   "chrono",
 ] }
-
-
-[[bin]]
-name = "teacher_service"
+actix-web = "4"
+actix-rt = "2.7"
+serde = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+openssl = { version = "0.10", features = ["vendored"] }

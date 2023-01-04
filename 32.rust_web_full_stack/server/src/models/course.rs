@@ -79,3 +79,8 @@ impl TryFrom<web::Json<UpdateCourseDTO>> for UpdateCourseDTO {
     })
   }
 }
+
+#[derive(Deserialize)]
+pub struct GetCoursesQuery {
+  pub teacher_id: Option<i32>,
+}

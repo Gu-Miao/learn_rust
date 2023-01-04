@@ -8,10 +8,10 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
 pub fn course_routes(cfg: &mut web::ServiceConfig) {
   cfg.service(
     web::scope("/courses")
+      .route("/", web::get().to(get_courses))
       .route("/", web::post().to(create_course))
-      .route("/{teacher_id}", web::get().to(get_courses_of_teacher))
-      .route("/{teacher_id}/{course_id}", web::get().to(get_course))
-      .route("/{teacher_id}/{course_id}", web::delete().to(remove_course))
-      .route("/{teacher_id}/{course_id}", web::put().to(update_course)),
+      .route("/{id}", web::get().to(get_course))
+      .route("/{id}", web::delete().to(remove_course))
+      .route("/{id}", web::put().to(update_course)),
   );
 }
