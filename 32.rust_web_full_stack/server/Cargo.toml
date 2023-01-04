@@ -20,8 +20,6 @@ sqlx = { version = "0.5", default_features = false, features = [
   "chrono",
 ] }
 
-[[bin]]
-name = "server1"
 
 [[bin]]
 name = "teacher_service"
