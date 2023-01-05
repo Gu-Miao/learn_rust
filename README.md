@@ -37,6 +37,7 @@
 30. [文件系统](30.fs/src/main.rs)
 31. [Rust 全栈开发 - 前戏](31.rust_web_full_stack_foreplay/README.md)
 32. [Rust 全栈开发](32.rust_web_full_stack/README.md)
+33. [基于 WebAssembly 的贪吃蛇小游戏](33.webassembly_greedy_snake/README.md)
 
 ## 参考教程：
 
@@ -45,6 +46,7 @@
 - [Rust Tips - 比较数值](https://www.bilibili.com/video/BV1Hq4y1T7Kg)
 - [Rust Web 全栈开发教程【完结】](https://www.bilibili.com/video/BV1RP4y1G7KF/?spm_id_from=333.999.0.0)
 - [Rust 的文件操作](https://www.bilibili.com/video/BV1jf4y1p7BV)
+- [从零开始创建一个 WebAssembly 游戏](https://www.bilibili.com/video/BV19a41127Dq)
 
 ## License
 
