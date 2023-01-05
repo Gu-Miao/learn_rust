@@ -38,6 +38,7 @@ async fn main() -> io::Result<()> {
       .app_data(shared_data.clone())
       .configure(general_routes)
       .configure(course_routes)
+      .configure(teacher_routes)
   };
 
   HttpServer::new(app).bind("127.0.0.1:3000")?.run().await
