@@ -15,5 +15,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["src", "vite-env.d.ts"]
+  "include": ["www", "vite-env.d.ts"]
 }

@@ -3,3 +3,5 @@ target
 Cargo.lock
 .vscode
 node_modules
+pkg
+dist

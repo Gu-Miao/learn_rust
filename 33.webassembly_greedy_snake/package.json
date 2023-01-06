@@ -1,0 +1,20 @@
+{
+  "name": "greedy_snake",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "concurrently \"nodemon --config nodemon.json\" \"vite\"",
+    "build:www": "tsc && vite build",
+    "build:wasm": "wasm-pack build --target web && pnpm install",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "greedy_snake_wasm": "file:pkg"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0"
+  }
+}

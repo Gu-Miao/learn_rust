@@ -1,5 +1,5 @@
 [package]
-name = "webassembly_greedy_snake"
+name = "greedy_snake_wasm"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 wasm-bindgen = "0.2"
+wee_alloc = "0.4"
 
 [lib]
 crate-type = ["cdylib"]
