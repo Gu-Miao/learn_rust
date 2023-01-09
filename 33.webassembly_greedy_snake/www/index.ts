@@ -1,4 +1,4 @@
-import init, { CanvasData } from 'greedy_snake_wasm'
+import init, { CanvasData, Direction } from 'greedy_snake_wasm'
 import wasm from 'greedy_snake_wasm/greedy_snake_wasm_bg.wasm?url'
 
 const CELL_SIZE = 30
@@ -14,6 +14,25 @@ canvas.width = canvas_size
 canvas.height = canvas_size
 
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+
+requestAnimationFrame(render)
+
+window.addEventListener('keydown', e => {
+  switch (e.code) {
+    case 'ArrowLeft':
+      data.turn(Direction.Left)
+      break
+    case 'ArrowRight':
+      data.turn(Direction.Right)
+      break
+    case 'ArrowUp':
+      data.turn(Direction.Up)
+      break
+    case 'ArrowDown':
+      data.turn(Direction.Down)
+      break
+  }
+})
 
 function drawBackground() {
   for (let i = 0; i < CELL_COUNT + 1; i++) {
@@ -53,5 +72,3 @@ function render() {
     requestAnimationFrame(render)
   }, 200)
 }
-
-requestAnimationFrame(render)
