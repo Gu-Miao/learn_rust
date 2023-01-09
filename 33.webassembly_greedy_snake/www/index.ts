@@ -54,6 +54,18 @@ function drawSnake() {
   const y = Math.floor(headingIndex / CELL_COUNT)
 
   ctx.beginPath()
+  ctx.fillStyle = 'black'
+  ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+  ctx.stroke()
+}
+
+function drawReward() {
+  const rewardIndex = data.reward_index()
+  const x = rewardIndex % CELL_COUNT
+  const y = Math.floor(rewardIndex / CELL_COUNT)
+
+  ctx.beginPath()
+  ctx.fillStyle = 'red'
   ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
   ctx.stroke()
 }
@@ -61,6 +73,7 @@ function drawSnake() {
 function draw() {
   drawBackground()
   drawSnake()
+  drawReward()
 }
 
 function render() {

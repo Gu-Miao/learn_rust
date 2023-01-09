@@ -1,3 +1,4 @@
+use rand::Rng;
 use wasm_bindgen::prelude::*;
 use wee_alloc::WeeAlloc;
 
@@ -8,6 +9,7 @@ static ALLOC: WeeAlloc = WeeAlloc::INIT;
 pub struct CanvasData {
   cell_size: usize,
   cell_count: usize,
+  reward_index: usize,
   snake: Snake,
 }
 
@@ -17,8 +19,17 @@ impl CanvasData {
     Self {
       cell_size,
       cell_count,
+      reward_index: CanvasData::gen_reward_index(cell_count),
       snake: Snake::new(heading_index),
     }
+  }
+
+  fn gen_reward_index(cell_count: usize) -> usize {
+    rand::thread_rng().gen_range(0..cell_count.pow(2))
+  }
+
+  pub fn reward_index(&self) -> usize {
+    self.reward_index
   }
 
   pub fn canvas_size(&self) -> usize {
@@ -62,7 +73,7 @@ impl CanvasData {
     (index % self.cell_count, index / self.cell_count)
   }
 
-  fn coordinate_to_index(&self, x: usize, y: usize) -> usize {
+  pub fn coordinate_to_index(&self, x: usize, y: usize) -> usize {
     x + y * self.cell_count
   }
 }
