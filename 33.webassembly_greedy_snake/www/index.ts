@@ -1,12 +1,15 @@
-import init, { CanvasData, Direction } from 'greedy_snake_wasm'
-import wasm from 'greedy_snake_wasm/greedy_snake_wasm_bg.wasm?url'
+import init, { CanvasData, Direction, Index, Coordinate } from 'greedy_snake_wasm'
+import wasmPath from 'greedy_snake_wasm/greedy_snake_wasm_bg.wasm?url'
 
 const CELL_SIZE = 30
 const CELL_COUNT = 30
 
-await init(wasm)
+const defaultDirection = Direction.Right
+const defaultLength = 3
 
-const data = CanvasData.new(CELL_SIZE, CELL_COUNT, Math.round(Math.random() * CELL_COUNT ** 2))
+const wasm = await init(wasmPath)
+
+const data = CanvasData.new(CELL_SIZE, CELL_COUNT, defaultLength, defaultDirection)
 const canvas_size = data.canvas_size()
 
 const canvas = document.querySelector('canvas') as HTMLCanvasElement
@@ -49,13 +52,19 @@ function drawBackground() {
 }
 
 function drawSnake() {
-  const headingIndex = data.heading_index()
-  const x = headingIndex % CELL_COUNT
-  const y = Math.floor(headingIndex / CELL_COUNT)
+  const bodyIndices = new Uint32Array(
+    wasm.memory.buffer,
+    data.snake_body_indices(),
+    data.snake_len(),
+  )
 
-  ctx.beginPath()
-  ctx.fillStyle = 'black'
-  ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+  bodyIndices.forEach((index, i) => {
+    const coord = Index.new(index).to_coordinate(CELL_COUNT)
+    ctx.beginPath()
+    ctx.fillStyle = i === 0 ? 'grey' : 'black'
+    ctx.fillRect(coord[0] * CELL_SIZE, coord[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+  })
+
   ctx.stroke()
 }
 
