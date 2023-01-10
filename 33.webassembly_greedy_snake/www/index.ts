@@ -1,4 +1,4 @@
-import init, { CanvasData, Direction, Index, Coordinate } from 'greedy_snake_wasm'
+import init, { CanvasData, Direction, Index } from 'greedy_snake_wasm'
 import wasmPath from 'greedy_snake_wasm/greedy_snake_wasm_bg.wasm?url'
 
 const CELL_SIZE = 30

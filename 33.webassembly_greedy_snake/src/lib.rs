@@ -17,24 +17,19 @@ impl Coordinate {
   pub fn new(x: usize, y: usize) -> Self {
     Self(x, y)
   }
-  pub fn from_index(Index(index): Index, cell_count: usize) -> Self {
-    Self::new(index % cell_count, index / cell_count)
-  }
   pub fn to_index(&self, cell_count: usize) -> Index {
     Index::new(self.0 + self.1 * cell_count)
   }
 }
 
 #[wasm_bindgen]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Index(pub usize);
 
 #[wasm_bindgen]
 impl Index {
   pub fn new(index: usize) -> Self {
     Self(index)
-  }
-  pub fn from_coordinate(Coordinate(x, y): Coordinate, cell_count: usize) -> Self {
-    Self::new(x + y * cell_count)
   }
   pub fn to_coordinate(&self, cell_count: usize) -> Coordinate {
     Coordinate::new(self.0 % cell_count, self.0 / cell_count)
@@ -66,7 +61,7 @@ impl Snake {
         Direction::Right => body_indices.push(Index::new(heading_index + i)),
         Direction::Up => body_indices.push(Index::new(heading_index - i * cell_count)),
         Direction::Down => body_indices.push(Index::new(heading_index + i * cell_count)),
-      }
+      };
     }
 
     Self {
@@ -80,23 +75,34 @@ impl Snake {
 pub struct CanvasData {
   cell_size: usize,
   cell_count: usize,
-  reward_index: usize,
+  reward_index: Index,
   snake: Snake,
 }
 
 #[wasm_bindgen]
 impl CanvasData {
   pub fn new(cell_size: usize, cell_count: usize, len: usize, direction: Direction) -> Self {
+    let snake = Snake::new(random(cell_count.pow(2)), len, cell_count, direction);
+
     Self {
       cell_size,
       cell_count,
-      reward_index: random(cell_count.pow(2)),
-      snake: Snake::new(random(cell_count.pow(2)), len, cell_count, direction),
+      reward_index: CanvasData::gen_reward_index(cell_count.pow(2), &snake.body_indices),
+      snake,
+    }
+  }
+
+  fn gen_reward_index(max: usize, vec: &Vec<Index>) -> Index {
+    loop {
+      let index = Index::new(random(max));
+      if !vec.contains(&index) {
+        break index;
+      }
     }
   }
 
   pub fn reward_index(&self) -> usize {
-    self.reward_index
+    self.reward_index.0
   }
 
   pub fn canvas_size(&self) -> usize {
@@ -112,12 +118,17 @@ impl CanvasData {
   }
 
   pub fn turn(&mut self, direction: Direction) {
-    self.snake.direction = direction;
+    let next_heading_index = self.next_heading_index(&direction);
+    if next_heading_index != self.snake.body_indices[1] {
+      self.snake.direction = direction;
+    }
   }
 
-  pub fn update(&mut self) {
-    let Coordinate(mut x, mut y) = self.snake.body_indices[0].to_coordinate(self.cell_count);
-    let coordinate = match self.snake.direction {
+  fn next_heading_index(&self, direction: &Direction) -> Index {
+    let body_indeices = self.snake.body_indices.clone();
+    let Coordinate(mut x, mut y) = body_indeices[0].to_coordinate(self.cell_count);
+
+    let coordinate = match direction {
       Direction::Left => {
         if x == 0 {
           x = self.cell_count;
@@ -134,6 +145,15 @@ impl CanvasData {
       Direction::Down => Coordinate::new(x, (y + 1) % self.cell_count),
     };
 
-    self.snake.body_indices[0] = coordinate.to_index(self.cell_count);
+    coordinate.to_index(self.cell_count)
+  }
+
+  pub fn update(&mut self) {
+    let clone = self.snake.body_indices.clone();
+    self.snake.body_indices[0] = self.next_heading_index(&self.snake.direction);
+
+    for i in 1..self.snake_len() {
+      self.snake.body_indices[i] = clone[i - 1]
+    }
   }
 }
