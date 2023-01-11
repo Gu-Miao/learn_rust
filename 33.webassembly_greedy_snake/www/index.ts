@@ -88,8 +88,8 @@ function draw() {
 function render() {
   setTimeout(() => {
     ctx.clearRect(0, 0, canvas_size, canvas_size)
-    data.update()
     draw()
+    data.update()
 
     requestAnimationFrame(render)
   }, 200)

@@ -57,10 +57,10 @@ impl Snake {
 
     for i in 0..len {
       match direction {
-        Direction::Left => body_indices.push(Index::new(heading_index - i)),
-        Direction::Right => body_indices.push(Index::new(heading_index + i)),
-        Direction::Up => body_indices.push(Index::new(heading_index - i * cell_count)),
-        Direction::Down => body_indices.push(Index::new(heading_index + i * cell_count)),
+        Direction::Left => body_indices.push(Index::new(heading_index + i)),
+        Direction::Right => body_indices.push(Index::new(heading_index - i)),
+        Direction::Up => body_indices.push(Index::new(heading_index + i * cell_count)),
+        Direction::Down => body_indices.push(Index::new(heading_index - i * cell_count)),
       };
     }
 
