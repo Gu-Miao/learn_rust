@@ -10,12 +10,20 @@
         margin: 0;
         height: 100vh;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
+        gap: 1em;
+        font-size: 16px;
       }
     </style>
   </head>
   <body>
+    <button id="start">Start</button>
+    <div id="scoreContainer" style="display: none">
+      <span>Score:</span>
+      <span id="score">-/-</span>
+    </div>
     <canvas></canvas>
     <script type="module" src="/index.ts"></script>
   </body>

@@ -72,33 +72,71 @@ impl Snake {
 }
 
 #[wasm_bindgen]
-pub struct CanvasData {
+#[derive(Clone, Copy, PartialEq)]
+pub enum Status {
+  Idle,
+  Playing,
+  Won,
+  Lost,
+}
+
+#[wasm_bindgen]
+pub struct Game {
   cell_size: usize,
   cell_count: usize,
   reward_index: Index,
   snake: Snake,
+  status: Status,
+  target: usize,
+  score: usize,
 }
 
 #[wasm_bindgen]
-impl CanvasData {
-  pub fn new(cell_size: usize, cell_count: usize, len: usize, direction: Direction) -> Self {
-    let snake = Snake::new(random(cell_count.pow(2)), len, cell_count, direction);
+impl Game {
+  pub fn new(
+    cell_size: usize,
+    cell_count: usize,
+    default_snake_len: usize,
+    direction: Direction,
+    target: usize,
+  ) -> Self {
+    let snake = Snake::new(
+      random(cell_count.pow(2)),
+      default_snake_len,
+      cell_count,
+      direction,
+    );
 
     Self {
       cell_size,
       cell_count,
-      reward_index: CanvasData::gen_reward_index(cell_count.pow(2), &snake.body_indices),
+      reward_index: Game::gen_reward_index(cell_count, &snake.body_indices),
       snake,
+      status: Status::Idle,
+      target,
+      score: 0,
     }
   }
 
-  fn gen_reward_index(max: usize, vec: &Vec<Index>) -> Index {
+  fn gen_reward_index(cell_count: usize, vec: &Vec<Index>) -> Index {
     loop {
-      let index = Index::new(random(max));
+      let index = Index::new(random(cell_count.pow(2)));
       if !vec.contains(&index) {
         break index;
       }
     }
+  }
+
+  pub fn score(&self) -> usize {
+    self.score
+  }
+
+  pub fn status(&self) -> Status {
+    self.status
+  }
+
+  pub fn start(&mut self) {
+    self.status = Status::Playing;
   }
 
   pub fn reward_index(&self) -> usize {
@@ -149,11 +187,32 @@ impl CanvasData {
   }
 
   pub fn update(&mut self) {
+    if self.status != Status::Playing {
+      return;
+    }
+
     let clone = self.snake.body_indices.clone();
-    self.snake.body_indices[0] = self.next_heading_index(&self.snake.direction);
+    let next_heading_index = self.next_heading_index(&self.snake.direction);
+
+    if clone.contains(&next_heading_index) {
+      self.status = Status::Lost;
+      return;
+    }
+
+    self.snake.body_indices[0] = next_heading_index;
 
     for i in 1..self.snake_len() {
       self.snake.body_indices[i] = clone[i - 1]
+    }
+
+    if self.reward_index == self.snake.body_indices[0] {
+      self.snake.body_indices.push(self.reward_index);
+      self.reward_index = Self::gen_reward_index(self.cell_count, &self.snake.body_indices);
+      self.score += 1;
+    }
+
+    if self.score == self.target {
+      self.status = Status::Won;
     }
   }
 }
