@@ -44,7 +44,7 @@
 - [The Rust Programming Language](https://doc.rust-lang.org/book/) 即《Rust 权威指南》
 - [Rust 编程语言入门教程（Rust 语言/Rust 权威指南配套）【已完结】](https://www.bilibili.com/video/BV1hp4y1k7SV/)
 - [Rust Tips - 比较数值](https://www.bilibili.com/video/BV1Hq4y1T7Kg)
-- [Rust Web 全栈开发教程【完结】](https://www.bilibili.com/video/BV1RP4y1G7KF/?spm_id_from=333.999.0.0)
+- [Rust Web 全栈开发教程【完结】](https://www.bilibili.com/video/BV1RP4y1G7KF)
 - [Rust 的文件操作](https://www.bilibili.com/video/BV1jf4y1p7BV)
 - [从零开始创建一个 WebAssembly 游戏](https://www.bilibili.com/video/BV19a41127Dq)
 
