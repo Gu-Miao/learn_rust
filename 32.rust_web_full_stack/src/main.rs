@@ -1,21 +1,16 @@
-use actix_web::{web, App, HttpServer};
+use actix_cors::Cors;
+use actix_web::{http, web, App, HttpServer};
 use dotenvy::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::io;
 use std::sync::Mutex;
 
-#[path = "db_access/mod.rs"]
 mod db_access;
-#[path = "error.rs"]
 mod error;
-#[path = "handlers/mod.rs"]
 mod handlers;
-#[path = "models/mod.rs"]
 mod models;
-#[path = "routers.rs"]
 mod routers;
-#[path = "state.rs"]
 mod state;
 
 use routers::*;
@@ -34,11 +29,22 @@ async fn main() -> io::Result<()> {
     db,
   });
   let app = move || {
+    let cors = Cors::default()
+      .allowed_origin_fn(|origin, _| origin.as_bytes().starts_with(b"http://localhost"))
+      .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+      .allowed_headers(vec![
+        http::header::AUTHORIZATION,
+        http::header::ACCEPT,
+        http::header::CONTENT_TYPE,
+      ])
+      .max_age(360);
+
     App::new()
       .app_data(shared_data.clone())
       .configure(general_routes)
       .configure(course_routes)
       .configure(teacher_routes)
+      .wrap(cors)
   };
 
   HttpServer::new(app).bind("127.0.0.1:3000")?.run().await
