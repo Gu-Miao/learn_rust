@@ -39,6 +39,7 @@
 32. [Rust 全栈开发](32.rust_web_full_stack/README.md)
 33. [基于 WebAssembly 的贪吃蛇小游戏](33.webassembly_greedy_snake/README.md)
 34. [Rust 异步编程简易教程](34.basic_async/src/main.rs)
+35. [Rust 异步编程](35.rust_async/src/main.rs)
 
 ## 参考教程：
 
@@ -49,6 +50,8 @@
 - [Rust 的文件操作](https://www.bilibili.com/video/BV1jf4y1p7BV)
 - [从零开始创建一个 WebAssembly 游戏](https://www.bilibili.com/video/BV19a41127Dq)
 - [Rust Async 异步编程 简易教程](https://www.bilibili.com/video/BV16r4y187P4)
+- [Asynchronous Programming in Rust](https://rust-lang.github.io/async-book)
+- [Rust Async 异步编程（完结）](https://www.bilibili.com/video/BV1Ki4y1C7gj)
 
 ## License
 
