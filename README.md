@@ -41,6 +41,7 @@
 34. [Rust 异步编程简易教程](34.basic_async/src/main.rs)
 35. [Rust 异步编程起步](35.rust_async_getting_started/src/main.rs)
 36. [Future Trait](36.future_trait/src/main.rs)
+37. [Waker](37.waker/src/lib.rs)
 
 ## 参考教程：
 
