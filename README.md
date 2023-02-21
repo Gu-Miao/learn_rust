@@ -39,7 +39,7 @@
 32. [Rust 全栈开发](32.rust_web_full_stack/README.md)
 33. [基于 WebAssembly 的贪吃蛇小游戏](33.webassembly_greedy_snake/README.md)
 34. [Rust 异步编程简易教程](34.basic_async/src/main.rs)
-35. [Rust 异步编程](35.rust_async/src/main.rs)
+35. [Rust 异步编程起步](35.rust_async_getting_started/src/main.rs)
 
 ## 参考教程：
 

@@ -22,9 +22,8 @@
 // 同时异步代码的性能也依赖于异步运行时（通常性能都很高）
 
 use futures::executor::block_on;
-use std::task::Poll;
 
-// 异步函数返回的是一个实现了 Future trait 的类型
+// 异步函数返回的是一个实现了 Future trait 的状态机
 // Future 是惰性的，需要一个执行者来运行
 async fn hello_world() {
   println!("async hello world");
@@ -35,24 +34,30 @@ fn run_future() {
   block_on(future); // 使用 block_on 执行，它会阻塞当前线程直到 Future 完成
 }
 
-// 也可以使用 .await 来等待一个 Future 的完成，使用 .await 不会阻塞当前线程
+// 也可以使用 .await 来等待一个 Future 的完成，使用 .await 不会阻塞当前线程，而是异步地等待其完成
 
-// Future trait 是 Rust 异步编程的核心
-// 它本质上是一种异步计算，可以产生一个值
-// 实现了 Fture trait 的类型表示目前可能还不可用的值
+struct Song {}
 
-// 一个简化版的 Future trait
-trait SimpleFuture {
-  // 占位类型，代表最终 Future 输出的类型
-  type Output;
-  // 调用 poll 方法会驱动 Future 向着完成的方向前进
-  // Poll 枚举来自 std::tasks，它有两个变体 Pending 和 Ready<T>
-  // Pending 表示未完成 Ready<T> 表示完成
-  // 当 Future 准备取得更多进展时可以调用 wake 上的方法告诉异步执行器，再次调用 poll 方法
-  // 对于 Future，你唯一能做的就是一直调用 poll 方法来推动它，直到产生一个可用的值
-  fn poll(&mut self, wake: fn()) -> Poll<Self::Output>;
+async fn learn_song() -> Song {
+  Song {}
+}
+
+async fn sing(_: Song) {}
+async fn dance() {}
+
+async fn learn_and_sing() {
+  let song = learn_song().await;
+  sing(song).await;
+}
+
+// 异步地唱歌和跳舞
+async fn sing_and_dance() {
+  let f1 = learn_and_sing();
+  let f2 = dance();
+  futures::join!(f1, f2);
 }
 
 fn main() {
-  run_future()
+  run_future();
+  block_on(sing_and_dance());
 }

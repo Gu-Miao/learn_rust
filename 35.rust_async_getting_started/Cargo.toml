@@ -1,5 +1,5 @@
 [package]
-name = "rust_async"
+name = "rust_async_getting_started"
 version = "0.1.0"
 edition = "2021"
 
