@@ -21,7 +21,7 @@
 // * 引用可以为动态大小的类型提供上述的保障。对于在内存中没有固定大小的类型，Rust 会保证其长度（或称为宽度），会保
 //   存在内部指针的附近。如此，Rust 可以保证引用永远不会超出类型在内存中的空间。
 
-fn ram_test() {
+fn ram_test_1() {
   static B: [u8; 10] = [99, 55, 66, 54, 15, 94, 53, 64, 78, 15];
   static C: [u8; 11] = [156, 65, 66, 75, 33, 76, 61, 62, 178, 105, 0];
 
@@ -29,7 +29,7 @@ fn ram_test() {
   let b = &B;
   let c = &C;
 
-  println!("===== ram_test =====");
+  println!("===== ram_test 1 =====");
 
   // {:p} 这种格式化代表我们需要打印的东西是一个指针，并且我们需要打印其地址。
   println!("a: {}, b: {:p}, c: {:p}\n", a, b, c);
@@ -62,6 +62,45 @@ fn ram_test() {
   // c 和 C 一起，就是 Rust 中的 CStr 类型
 }
 
+use std::mem::size_of;
+
+fn ram_test_2() {
+  static B: [u8; 10] = [99, 55, 66, 54, 15, 94, 53, 64, 78, 15];
+  static C: [u8; 11] = [156, 65, 66, 75, 33, 76, 61, 62, 178, 105, 0];
+
+  let a: usize = 42;
+  let b: Box<[u8]> = Box::new(B);
+  let c = &C;
+
+  println!("===== ram_test 2 =====");
+
+  println!("a（无符号整数）");
+  println!("地址：{:p}", &a);
+  println!("大小：{:?} bytes", size_of::<usize>());
+  println!("值：{:?}\n", a);
+
+  println!("b（放入 Box 中）");
+  println!("地址：{:p}", &b);
+  println!("大小：{:?} bytes", size_of::<Box<[u8]>>());
+  println!("值：{:p}\n", b);
+
+  println!("c（C 的引用）");
+  println!("地址：{:p}", &c);
+  println!("大小：{:?} bytes", size_of::<&[u8; 11]>());
+  println!("值：{:p}\n", c);
+
+  println!("B（10 bytes 的数组）");
+  println!("地址：{:p}", &B);
+  println!("大小：{:?} bytes", size_of::<[u8; 10]>());
+  println!("值：{:?}\n", B);
+
+  println!("C（11 bytes 的数组）");
+  println!("地址：{:p}", &C);
+  println!("大小：{:?} bytes", size_of::<[u8; 11]>());
+  println!("值：{:?}\n", C);
+}
+
 fn main() {
-  ram_test()
+  ram_test_1();
+  ram_test_2();
 }
