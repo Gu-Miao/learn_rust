@@ -100,7 +100,46 @@ fn ram_test_2() {
   println!("值：{:?}\n", C);
 }
 
+use std::borrow::Cow;
+use std::ffi::CStr;
+use std::os::raw::c_char;
+use std::println;
+
+fn ram_test_3() {
+  static B: [u8; 10] = [99, 97, 114, 114, 121, 116, 111, 119, 101, 108];
+  static C: [u8; 11] = [116, 104, 97, 110, 107, 115, 102, 105, 115, 104, 0];
+
+  let a = 42;
+  let b: String;
+  let c: Cow<str>;
+
+  let b_ptr = &B as *const u8 as *mut u8;
+  let c_ptr = &C as *const u8 as *const c_char;
+
+  unsafe {
+    b = String::from_raw_parts(b_ptr, 10, 10);
+    c = CStr::from_ptr(c_ptr).to_string_lossy();
+  }
+
+  println!("===== ram_test 3 =====\n");
+
+  println!("a: {}, b: {}, c: {}", a, b, c);
+}
+
+// 原始指针
+//
+// 原始指针（裸指针）是指没有 Rust 标准保障的内存地址，它们是 unsafe 的。
+// 类型声明：
+// 可变：*const T
+// 不可变：*mut T
+// 示例：*const String 就是表示指向字符串的不可变原始指针。
+//
+// * *const T 与 *mut T 之间差异很小，可以相互转换，上面 ram_test_3 函数中就进行了转换。
+// * Rust 中的引用 &T 和 &mut T 最终都会被编译为原始指针，这就意味着我们无需冒着 unsafe
+//   的风险，就可以获得原始指针的性能。
+
 fn main() {
   ram_test_1();
   ram_test_2();
+  ram_test_3();
 }
