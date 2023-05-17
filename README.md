@@ -33,16 +33,32 @@
 26. [高级函数和闭包](26.advanced_fn_closure/src/main.rs)
 27. [宏](27.macro/binary/src/main.rs)
 28. [简单的 web 服务器](28.single_web_server/src/main.rs)
+
+---
+
 29. [数值比较](29.num_cmp/src/main.rs)
 30. [文件系统](30.fs/src/main.rs)
+
+---
+
 31. [Rust 全栈开发 - 前戏](31.rust_web_full_stack_foreplay/README.md)
 32. [Rust 全栈开发](32.rust_web_full_stack/README.md)
+
+---
+
 33. [基于 WebAssembly 的贪吃蛇小游戏](33.webassembly_greedy_snake/README.md)
+
+---
+
 34. [Rust 异步编程简易教程](34.basic_async/src/main.rs)
 35. [Rust 异步编程起步](35.rust_async_getting_started/src/main.rs)
 36. [Future Trait](36.future_trait/src/main.rs)
 37. [Waker](37.waker/src/lib.rs)
 38. [Executor](38.executor/src/main.rs)
+
+---
+
+999. [一些小知识点](999.sweet_points/)
 
 ## 参考教程：
 
