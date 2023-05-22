@@ -58,6 +58,10 @@
 
 ---
 
+60. [指针](60.pointer/src/main.rs)
+
+---
+
 999. [一些小知识点](999.sweet_points/)
 
 ## 参考教程：
@@ -71,6 +75,7 @@
 - [Rust Async 异步编程 简易教程](https://www.bilibili.com/video/BV16r4y187P4)
 - [Asynchronous Programming in Rust](https://rust-lang.github.io/async-book)
 - [Rust Async 异步编程（完结）](https://www.bilibili.com/video/BV1Ki4y1C7gj)
+- [Rust 编程语言中级教程 - 类型主题（完结）](https://www.bilibili.com/video/BV1TF411P74m)
 
 ## License
 
