@@ -68,9 +68,21 @@
 //
 // 异步代码的性能也依赖于异步运行时（通常性能都很高）。
 
-use futures::executor::block_on;
+// async
+//
+// * async 把一段代码转换为实现了 Future trait 的状态机。
+// * 虽然在同步方法中调用阻塞函数会阻塞整个线程，但阻塞的 Future 将放弃对线程的控制，从而
+//   允许其他 Future 的运行。
 
-// 异步函数返回的是一个实现了 Future trait 的状态机
+// async 函数
+//
+// * async 函数返回的是一个 Future，Future 需要一个执行者来执行。
+// * futures::executor::block_on：
+//   - block_on 会阻塞当前线程，直到 Future 执行完成。
+//   - 其他的执行者提供更复杂的行为，比如将多个 Future 安排到同一线程上。
+
+use futures::{self, executor::block_on};
+
 // Future 是惰性的，需要一个执行者来运行
 async fn hello_world() {
   println!("async hello world");
@@ -81,7 +93,10 @@ fn run_future() {
   block_on(future); // 使用 block_on 执行，它会阻塞当前线程直到 Future 完成
 }
 
-// 也可以使用 .await 来等待一个 Future 的完成，使用 .await 不会阻塞当前线程，而是异步地等待其完成
+// await
+//
+// * 也可以使用 .await 来等待一个 Future 的完成。
+// * 与 block_on 不同，使用 .await 不会阻塞当前线程，而是异步地等待其完成。
 
 struct Song {}
 
